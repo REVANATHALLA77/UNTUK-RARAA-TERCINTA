@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raraa's Arcade Hub 🎮</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #121223;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* Background Moving Pixel Stars */
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #00fff5, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #e94560, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #00fff5, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 230px 180px, #e94560, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 250px 250px;
+            animation: moveStars 25s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes moveStars {
+            from { background-position: 0 0; }
+            to { background-position: 0 250px; }
+        }
+
+        /* Top Status Bar */
+        .status-bar {
+            width: 100%;
+            max-width: 450px;
+            background: #16213e;
+            border: 2px solid #00fff5;
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.65rem;
+            margin-bottom: 15px;
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(0, 255, 245, 0.2);
+        }
+
+        #bgmBtn {
+            background: #e94560;
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.6rem;
+            cursor: pointer;
+        }
+
+        /* Main Container Card */
+        .console-box {
+            background: #16213e;
+            border: 4px solid #e94560;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 450px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(233, 69, 96, 0.4);
+            z-index: 10;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        h1 {
+            color: #00fff5;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px #e94560;
+        }
+
+        h2 {
+            color: #00fff5;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 0.9rem;
+            color: #dcdde1;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .greeting-badge {
+            display: inline-block;
+            background: #0f3460;
+            border: 1px solid #00fff5;
+            color: #00fff5;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-bottom: 20px;
+        }
+
+        /* Arcade Buttons */
+        .btn {
+            background: #e94560;
+            color: #fff;
+            border: none;
+            padding: 14px 15px;
+            border-radius: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.68rem;
+            cursor: pointer;
+            margin: 8px 0;
+            width: 100%;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: block;
+            box-shadow: 0 4px 0 #900c3f;
+            line-height: 1.4;
+        }
+
+        .btn:hover {
+            background: #00fff5;
+            color: #16213e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #00b8b4;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #00b8b4;
+        }
+
+        .btn-menu {
+            background: #0f3460;
+            border: 2px solid #533483;
+            box-shadow: 0 4px 0 #2b1055;
+            text-align: left;
+            padding-left: 18px;
+        }
+
+        .btn-back {
+            background: #533483;
+            box-shadow: 0 4px 0 #2b1055;
+            margin-top: 20px;
+            font-size: 0.6rem;
+        }
+
+        /* Content Box inside Submenus */
+        .inner-box {
+            background: #0f3460;
+            border: 2px solid #00fff5;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Quiz Options */
+        .quiz-opt {
+            background: #0f3460;
+            border: 2px solid #533483;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 12px 15px;
+            box-shadow: none;
+            font-weight: 600;
+        }
+
+        /* Final Choice Run Away Button */
+        .choice-group {
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .run-btn {
+            background: #533483;
+            box-shadow: 0 4px 0 #2b1055;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        /* Floating Tap Love Button */
+        .love-fab {
+            margin-top: 15px;
+            background: rgba(233, 69, 96, 0.2);
+            border: 2px solid #e94560;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .floating-heart {
+            position: fixed;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: floatUp 1.5s ease-out forwards;
+            z-index: 999;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-150px) scale(1.5); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <!-- Top Bar Status & Retro Audio -->
+    <div class="status-bar pixel-font">
+        <span>P2: RARAA ❤️</span>
+        <button id="bgmBtn" class="pixel-font" onclick="toggleRetroBGM()">🔊 BGM: OFF</button>
+    </div>
+
+    <!-- Main Console Box -->
+    <div class="console-box">
+
+        <!-- HOME SCREEN (MAIN MENU) -->
+        <div class="screen active" id="screen-home">
+            <h1 class="pixel-font">RARAA'S HUB 🎮</h1>
+            <div class="greeting-badge" id="greetingText">Halo Raraa! ✨</div>
+            <p>Pilih menu di bawah ini buat nemenin hari Raraa:</p>
+
+            <button class="btn btn-menu" onclick="openScreen('screen-spotify')">🎵 1. OUR SPOTIFY PLAYLIST</button>
+            <button class="btn btn-menu" onclick="openScreen('screen-quiz'); startQuiz();">🧠 2. MINI QUIZ & FINAL STAGE</button>
+            <button class="btn btn-menu" onclick="openScreen('screen-mood')">💌 3. MOOD BOOSTER & SEMANGAT</button>
+            <button class="btn btn-menu" onclick="openScreen('screen-tod')">🎲 4. TRUTH OR DARE GACHA</button>
+        </div>
+
+        <!-- MENU 1: SPOTIFY PLAYLIST -->
+        <div class="screen" id="screen-spotify">
+            <h2 class="pixel-font">OUR PLAYLIST 🎧</h2>
+            <div class="inner-box">
+                <p style="font-weight: 600; color: #00fff5; margin-bottom: 8px;">"Revan & Raraa's Soundtrack 🎶"</p>
+                <p style="font-size: 0.85rem; margin-bottom: 0;">Kumpulan lagu kita berdua. Dengerin pas lagi santai atau lagi kangen Revan ya!</p>
+            </div>
+            <a href="https://open.spotify.com/playlist/2TipOUPCbNbkisdkzPPsGL?si=674637ff96da42f6" target="_blank" class="btn" onclick="playClick()">OPEN IN SPOTIFY ↗</a>
+            <button class="btn btn-back" onclick="openScreen('screen-home')">⬅ BACK TO MENU</button>
+        </div>
+
+        <!-- MENU 2: MINI QUIZ -->
+        <div class="screen" id="screen-quiz">
+            <h2 class="pixel-font">MINI QUIZ 🧠</h2>
+            <p id="quizQ" style="font-weight: 600; color: #fff;">Pertanyaan...</p>
+            <div id="quizOptionsBox"></div>
+            <p id="quizMsg" style="min-height: 28px; font-size: 0.85rem; margin-top: 12px; font-weight: 600;"></p>
+            <button class="btn btn-back" onclick="openScreen('screen-home')">⬅ BACK TO MENU</button>
+        </div>
+
+        <!-- FINAL STAGE AFTER QUIZ: MAU BARENG TERUS ATAU ENGGA -->
+        <div class="screen" id="screen-final">
+            <h2 class="pixel-font">FINAL QUESTION 🏆</h2>
+            <div class="inner-box">
+                <p style="font-size: 1rem; font-weight: 600; color: #00fff5; margin-bottom: 8px;">
+                    "Raraa mau bareng sama Revan terus atau engga? ❤️"
+                </p>
+                <p style="font-size: 0.8rem; margin-bottom: 0; color: #dcdde1;">
+                    Jawab jujur ya, gak boleh kabur!
+                </p>
+            </div>
+
+            <div class="choice-group">
+                <!-- GANTI NOMOR WHATSAPP KAMU DI BAWAH INI -->
+                <a href="https://wa.me/6289606765635?text=Iyaa%20Raraa%20mau%20bareng%20Revan%20terus%20%E2%9D%A4%EF%B8%8F" target="_blank" class="btn" onclick="playClick()">IYAA, MAU TERUS ❤️</a>
+                <button class="btn run-btn" id="runBtn" onmouseover="runAway()" onclick="runAway()">ENGGAA 😜</button>
+            </div>
+
+            <button class="btn btn-back" onclick="openScreen('screen-home')">⬅ BACK TO MENU</button>
+        </div>
+
+        <!-- MENU 3: MOOD BOOSTER & KATA SEMANGAT -->
+        <div class="screen" id="screen-mood">
+            <h2 class="pixel-font">MOOD BOOSTER 💌</h2>
+            <p style="font-size: 0.85rem;">Raraa lagi ngerasain apa sekarang? Klik salah satu:</p>
+            
+            <button class="btn" style="background: #0f3460; border: 1px solid #00fff5;" onclick="showMood('capek')">😫 LAGI CAPEK / BADMOOD</button>
+            <button class="btn" style="background: #0f3460; border: 1px solid #00fff5;" onclick="showMood('kangen')">🥹 LAGI KANGEN REVAN</button>
+            <button class="btn" style="background: #0f3460; border: 1px solid #00fff5;" onclick="showMood('semangat')">🔥 BUTUH MOTIVASI</button>
+
+            <div class="inner-box" style="margin-top: 15px;">
+                <p id="moodResult" style="font-size: 0.88rem; margin: 0; color: #fff;">Pilih tombol di atas dulu ya Raraa ✨</p>
+            </div>
+
+            <button class="btn btn-back" onclick="openScreen('screen-home')">⬅ BACK TO MENU</button>
+        </div>
+
+        <!-- MENU 4: TRUTH OR DARE GACHA -->
+        <div class="screen" id="screen-tod">
+            <h2 class="pixel-font">TRUTH OR DARE 🎲</h2>
+            <p style="font-size: 0.85rem;">Klik tombol di bawah buat gacha tantangan atau pertanyaan jujur!</p>
+            
+            <div class="inner-box">
+                <span id="todBadge" style="font-size: 0.7rem; color: #e94560; font-weight: bold; margin-bottom: 8px;">[ READY TO SPIN ]</span>
+                <p id="todText" style="font-size: 0.9rem; margin: 0; color: #fff;">Tekan tombol SPIN di bawah ini!</p>
+            </div>
+
+            <button class="btn" onclick="spinTOD()">🎰 SPIN CARD</button>
+            <button class="btn btn-back" onclick="openScreen('screen-home')">⬅ BACK TO MENU</button>
+        </div>
+
+    </div>
+
+    <!-- Interactive Love Rain Button -->
+    <button class="love-fab pixel-font" onclick="spawnHearts(event)">❤️ TAP FOR LOVE</button>
+
+    <script>
+        // --- 1. DYNAMIC GREETING ---
+        const hour = new Date().getHours();
+        const greetEl = document.getElementById('greetingText');
+        if (hour < 11) greetEl.innerText = "Good Morning Raraa! ☀️";
+        else if (hour < 15) greetEl.innerText = "Selamat Siang Raraa! Jangan Lupa Makan 🍱";
+        else if (hour < 19) greetEl.innerText = "Selamat Sore Raraa! Semangat Terus 🌤️";
+        else greetEl.innerText = "Good Night Raraa! Jangan Begadang Ya 🌙";
+
+        // --- 2. RETRO 8-BIT AUDIO SYNTHESIZER ---
+        let audioCtx = null;
+        let bgmInterval = null;
+        let isPlaying = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playClick() {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        }
+
+        const melody = [
+            261.63, 329.63, 392.00, 523.25,
+            493.88, 392.00, 329.63, 392.00,
+            293.66, 349.23, 440.00, 523.25,
+            493.88, 392.00, 349.23, 293.66
+        ];
+        let noteIdx = 0;
+
+        function toggleRetroBGM() {
+            initAudio();
+            const btn = document.getElementById('bgmBtn');
+            if (!isPlaying) {
+                isPlaying = true;
+                btn.innerText = "🔊 BGM: ON";
+                btn.style.background = "#00b8b4";
+                bgmInterval = setInterval(() => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(melody[noteIdx], audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                    noteIdx = (noteIdx + 1) % melody.length;
+                }, 300);
+            } else {
+                isPlaying = false;
+                btn.innerText = "🔇 BGM: OFF";
+                btn.style.background = "#e94560";
+                clearInterval(bgmInterval);
+            }
+        }
+
+        // --- 3. NAVIGATION ---
+        function openScreen(screenId) {
+            playClick();
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // --- 4. QUIZ LOGIC (KHUSUS RARAA & REVAN) ---
+        const quizList = [
+            {
+                q: "Pertanyaan 1: Siapa yang paling suka tidur? 😴",
+                opts: ["Revan", "Raraa"],
+                ans: 0,
+                msg: "WKWK bener! Revan emang tukang tidur banget +100 EXP!"
+            },
+            {
+                q: "Pertanyaan 2: Siapa dulu yang ngechat duluan? 💬",
+                opts: ["Revan", "Raraa"],
+                ans: 0,
+                msg: "Betul! Revan yang mulai duluan dong pastinya 😎 +100 EXP!"
+            },
+            {
+                q: "Pertanyaan 3: Revan mau anak berapa? 👶",
+                opts: ["2", "3", "7"],
+                ans: 2,
+                msg: "WKWK BENER 7! Siap-siap rame ya Raraa 😂 +100 EXP!"
+            }
+        ];
+        let qIdx = 0;
+
+        function startQuiz() {
+            qIdx = 0;
+            renderQuiz();
+        }
+
+        function renderQuiz() {
+            const item = quizList[qIdx];
+            document.getElementById('quizQ').innerText = item.q;
+            document.getElementById('quizMsg').innerText = "";
+            
+            const box = document.getElementById('quizOptionsBox');
+            box.innerHTML = "";
+
+            item.opts.forEach((optText, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn quiz-opt';
+                btn.innerText = optText;
+                btn.onclick = () => {
+                    playClick();
+                    const msgEl = document.getElementById('quizMsg');
+                    if (i === item.ans) {
+                        msgEl.style.color = "#00fff5";
+                        msgEl.innerText = item.msg;
+                        setTimeout(() => {
+                            qIdx++;
+                            if (qIdx < quizList.length) {
+                                renderQuiz();
+                            } else {
+                                openScreen('screen-final'); // Lanjut ke pertanyaan akhir!
+                            }
+                        }, 1500);
+                    } else {
+                        msgEl.style.color = "#e94560";
+                        msgEl.innerText = "Salahh Raraa! Coba pilih jawaban satunya 😜";
+                    }
+                };
+                box.appendChild(btn);
+            });
+        }
+
+        // --- 5. RUN AWAY BUTTON LOGIC ---
+        function runAway() {
+            playClick();
+            const btn = document.getElementById('runBtn');
+            const x = Math.random() * 200 - 100;
+            const y = Math.random() * 100 - 50;
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        // --- 6. MOOD BOOSTER LOGIC ---
+        function showMood(type) {
+            playClick();
+            const res = document.getElementById('moodResult');
+            if (type === 'capek') {
+                res.innerText = "🫂 Tarik napas dulu ya Raraa... Gak apa-apa kalau hari ini berat, kamu udah hebat banget bisa bertahan sejauh ini. Istirahat bentar, Revan selalu bangga sama kamu!";
+            } else if (type === 'kangen') {
+                res.innerText = "🥹 Revan juga kangen banget sama Raraa! Sabar ya, nanti kalau udah waktunya pas kita ngobrol & ketemu sepuasnya. Chat Revan sekarang yuk!";
+            } else if (type === 'semangat') {
+                res.innerText = "🔥 Ayo gas terus Raraa! Fokus sama target kamu hari ini, jangan gampang nyerah. Inget ada Revan di sini yang selalu dukung kamu!";
+            }
+        }
+
+        // --- 7. TRUTH OR DARE GACHA LOGIC ---
+        const todCards = [
+            { type: "TRUTH", text: "Apa satu hal kecil dari Revan yang paling bikin Raraa senyum-senyum sendiri?" },
+            { type: "DARE", text: "Kirim foto selfie muka paling random/lucu Raraa ke WhatsApp Revan sekarang!" },
+            { type: "TRUTH", text: "Lagu apa di playlist Spotify kita yang paling Raraa suka?" },
+            { type: "DARE", text: "Kirim Voice Note bilang 'Semangat ya Revan ganteng' ke WA sekarang wkwk!" },
+            { type: "TRUTH", text: "Kalau nanti kita ketemu, tempat atau hal pertama yang pengen Raraa lakuin apa?" },
+            { type: "DARE", text: "Screenshot layar ini terus kirim ke WA Revan buat klaim peluk virtual!" }
+        ];
+
+        function spinTOD() {
+            playClick();
+            const badge = document.getElementById('todBadge');
+            const text = document.getElementById('todText');
+            badge.innerText = "SPINNING...";
+            
+            setTimeout(() => {
+                const pick = todCards[Math.floor(Math.random() * todCards.length)];
+                badge.innerText = `[ ${pick.type} ]`;
+                badge.style.color = pick.type === "TRUTH" ? "#00fff5" : "#e94560";
+                text.innerText = pick.text;
+            }, 300);
+        }
+
+        // --- 8. FLOATING HEARTS EFFECT ---
+        function spawnHearts(e) {
+            playClick();
+            const emojis = ["❤️", "💖", "✨", "🎮", "🥰"];
+            for (let i = 0; i < 6; i++) {
+                const el = document.createElement('div');
+                el.className = 'floating-heart';
+                el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = (e.clientX + (Math.random() * 100 - 50)) + 'px';
+                el.style.top = (e.clientY - 20) + 'px';
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 1500);
+            }
+        }
+    </script>
+</body>
+</html>
